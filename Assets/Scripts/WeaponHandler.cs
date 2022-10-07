@@ -39,4 +39,9 @@ public class WeaponHandler : MonoBehaviour
         _currentWeapon = transform.GetChild(weaponIndex - 1).GetComponent<BaseWeapon>();
         _currentWeapon.gameObject.SetActive(true);
     }
+
+    private void OnEnable()
+    {
+        transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+    }
 }

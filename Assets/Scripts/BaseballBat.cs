@@ -13,7 +13,7 @@ public class BaseballBat : BaseWeapon
     {
         _animator = GetComponent<Animator>();
     }
-
+    
     private IEnumerator WaitForWormSwitch()
     {
         yield return new WaitForSeconds(5);

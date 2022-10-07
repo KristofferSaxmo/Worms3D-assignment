@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] [Range(2, 4)] private int teamAmount;
-    [SerializeField] [Range(1, 4)] private int wormsPerTeam;
+    private int _teamAmount = 2;
+    private int _wormsPerTeam = 1;
     [SerializeField] private List<Vector3> teamStartingPositions;
     [SerializeField] private List<Vector3> wormStartingPositions;
     [SerializeField] private List<Color> teamColors;
@@ -17,11 +18,16 @@ public class GameManager : Singleton<GameManager>
     
     private void Start()
     {
+        if (GlobalSceneData.TeamAmount != 0 && GlobalSceneData.WormsPerTeam != 0)
+        {
+            _teamAmount = GlobalSceneData.TeamAmount;
+            _wormsPerTeam = GlobalSceneData.WormsPerTeam;
+        }
         _teamsOfWorms = new List<List<GameObject>>();
-        for (int i = 0; i < teamAmount; i++)
+        for (int i = 0; i < _teamAmount; i++)
         {
             _teamsOfWorms.Add(new List<GameObject>());
-            for (int j = 0; j < wormsPerTeam; j++)
+            for (int j = 0; j < _wormsPerTeam; j++)
             {
                 _teamsOfWorms[i].Add(Instantiate(Resources.Load("Prefabs/Worm")) as GameObject);
                 DisableWorm(_teamsOfWorms[i][j]);
@@ -33,8 +39,8 @@ public class GameManager : Singleton<GameManager>
             }
         }
         _wormQueue = new Queue<GameObject>();
-        for (int i = 0; i < wormsPerTeam; i++)
-            for (int j = 0; j < teamAmount; j++)
+        for (int i = 0; i < _wormsPerTeam; i++)
+            for (int j = 0; j < _teamAmount; j++)
                 _wormQueue.Enqueue(_teamsOfWorms[j][i]);
 
         CurrentWorm = _wormQueue.Dequeue();
@@ -55,10 +61,9 @@ public class GameManager : Singleton<GameManager>
             if (_teamsOfWorms.Count != 1) break;
             
             int winningTeam = _teamsOfWorms[0][0].GetComponent<Worm>().TeamNumber;
-            GameObject endScene = Instantiate(Resources.Load("prefabs/EndScene") as GameObject);
-            TextMeshProUGUI endSceneText = endScene.GetComponentInChildren<TextMeshProUGUI>();
-            endSceneText.text = "Team " + (winningTeam + 1) + " Wins!";
-            endSceneText.color = teamColors[winningTeam];
+            GlobalSceneData.WinningTeam = winningTeam + 1;
+            GlobalSceneData.WinningTeamColor = teamColors[winningTeam];
+            SceneManager.LoadScene(2);
         }
     }
 
