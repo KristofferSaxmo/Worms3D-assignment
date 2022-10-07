@@ -55,7 +55,7 @@ public class WormMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "Terrain")
+        if (collision.gameObject.name == "Ground")
             _inAir = false;
     }
 }
